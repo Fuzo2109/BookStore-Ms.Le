@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+/* Design tokens – Ms. Le Bookstore (own palette, inspired by mission-driven used-book stores). */
+@theme {
+  --color-brand-50: #eef6f2;
+  --color-brand-100: #d5eadf;
+  --color-brand-200: #a9d3bd;
+  --color-brand-500: #2f8a63;
+  --color-brand-600: #22704f;
+  --color-brand-700: #1b5940;
+  --color-brand-900: #0f3325;
+  --color-accent-400: #f2a65a;
+  --color-accent-500: #e8833a;
+  --color-accent-600: #c96a24;
+  --color-cream: #fbf8f2;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-merriweather), Georgia, serif;
+}
+
+@layer base {
+  body {
+    @apply bg-cream text-stone-800 antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-serif text-stone-900;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-500;
+  }
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60;
+}
+@utility btn-primary {
+  @apply btn bg-brand-600 text-white hover:bg-brand-700;
+}
+@utility btn-accent {
+  @apply btn bg-accent-500 text-white hover:bg-accent-600;
+}
+@utility btn-outline {
+  @apply btn border border-stone-300 bg-white text-stone-700 hover:bg-stone-50;
+}
+@utility btn-danger {
+  @apply btn bg-red-600 text-white hover:bg-red-700;
+}
+@utility input {
+  @apply w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-stone-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 focus:outline-none aria-[invalid=true]:border-red-500;
+}
+@utility label {
+  @apply mb-1 block text-sm font-medium text-stone-700;
+}
+@utility field-error {
+  @apply mt-1 text-sm text-red-600;
+}
+@utility card {
+  @apply rounded-lg border border-stone-200 bg-white shadow-sm;
+}
