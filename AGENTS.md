@@ -14,7 +14,9 @@ Van Lang University). Team: **Le Tan Nguyen** (Product Owner), **Tran Minh Khoa*
 4. Also check the previous day's file for unticked items owned by the same member – they carry over.
 5. `docs/plan/README.md` has the overview: roles, key dates, the full task table.
 
-If today's date has no file (before 03/11 or after 17/11/2026), say so and show `docs/plan/README.md`.
+If today's date has no file (before 23/10 or after 17/11/2026), say so and show `docs/plan/README.md`.
+
+Files dated before 03/11/2026 are a **record** of Sprint 1 and the start of Sprint 2 (status taken from the Masterplan). When the user asks about them, help fill in the **Evidence** links; never invent evidence or tick items that were not done.
 
 ## 2. Rules that are graded – follow them exactly
 

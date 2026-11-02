@@ -119,7 +119,7 @@ tests/                       Vitest unit tests
 
 ## Daily work plan
 
-What each member does each day (03/11 → 17/11/2026): [`docs/plan/README.md`](docs/plan/README.md), one file per day in
+What each member does each day (23/10 → 17/11/2026; Sprint 1 days are a record): [`docs/plan/README.md`](docs/plan/README.md), one file per day in
 [`docs/plan/daily/`](docs/plan/daily/). AI agents start from [`AGENTS.md`](AGENTS.md).
 
 ## Team workflow
