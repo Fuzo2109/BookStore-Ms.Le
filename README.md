@@ -117,6 +117,11 @@ supabase/
 tests/                       Vitest unit tests
 ```
 
+## Daily work plan
+
+What each member does each day (03/11 → 17/11/2026): [`docs/plan/README.md`](docs/plan/README.md), one file per day in
+[`docs/plan/daily/`](docs/plan/daily/). AI agents start from [`AGENTS.md`](AGENTS.md).
+
 ## Team workflow
 
 See [CONTRIBUTING.md](CONTRIBUTING.md): no direct commits to `main`, one branch per backlog item, Conventional
