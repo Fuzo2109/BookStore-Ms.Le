@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
-import { logout } from "@/app/(auth)/actions";
+import { logout } from "@/lib/auth-actions";
 import { SearchBox } from "@/components/SearchBox";
 import { Logo } from "@/components/Logo";
 

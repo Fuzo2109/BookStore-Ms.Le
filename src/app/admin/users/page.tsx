@@ -5,6 +5,7 @@ import { formatDate } from "@/lib/format";
 import { setLocked } from "./actions";
 import { CreateAccountForm } from "./CreateAccountForm";
 import { ConfirmButton } from "@/components/ConfirmButton";
+import { PageHeader } from "@/components/admin/PageHeader";
 
 export const metadata: Metadata = { title: "Manage accounts" };
 
@@ -29,7 +30,11 @@ export default async function UsersPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold">Accounts</h1>
+      <PageHeader
+        title="Accounts"
+        description="Create Administrator or Customer accounts and lock accounts that should no longer sign in."
+        crumbs={[{ href: "/admin", label: "Dashboard" }]}
+      />
       <div className="grid gap-8 lg:grid-cols-[320px_1fr]">
         <CreateAccountForm />
 

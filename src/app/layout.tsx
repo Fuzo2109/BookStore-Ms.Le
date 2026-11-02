@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Merriweather } from "next/font/google";
 import "./globals.css";
-import { SiteHeader } from "@/components/SiteHeader";
-import { SiteFooter } from "@/components/SiteFooter";
 
 const inter = Inter({ subsets: ["latin", "vietnamese"], variable: "--font-inter" });
 const merriweather = Merriweather({
@@ -16,14 +14,14 @@ export const metadata: Metadata = {
   description: "Browse, search and discover books from Ms. Le's bookstores.",
 };
 
+/**
+ * Bare shell only. The storefront (`(store)/layout.tsx`) and the admin area
+ * (`admin/layout.tsx`) each add their own header and navigation.
+ */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${merriweather.variable}`}>
-      <body className="flex min-h-screen flex-col">
-        <SiteHeader />
-        <main className="flex-1">{children}</main>
-        <SiteFooter />
-      </body>
+      <body className="min-h-screen">{children}</body>
     </html>
   );
 }

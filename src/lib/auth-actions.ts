@@ -6,6 +6,16 @@ import { createClient } from "@/lib/supabase/server";
 import { fieldErrors, formValues, loginSchema, registerSchema, safeRedirectPath } from "@/lib/validation";
 import type { FormState } from "@/lib/types";
 
+/**
+ * Where to go after logging in: an explicit same-site `next` wins; otherwise
+ * administrators land on the admin portal and customers on the home page.
+ */
+function postLoginPath(role: string | undefined, next: unknown): string {
+  const requested = safeRedirectPath(next, "/");
+  if (requested !== "/") return requested;
+  return role === "admin" ? "/admin" : "/";
+}
+
 const LOCKED_MESSAGE = "This account has been locked. Please contact the administrator.";
 
 /** F1 – log in. */
@@ -26,18 +36,19 @@ export async function login(_prev: FormState, formData: FormData): Promise<FormS
   }
 
   // Defence in depth: also honour the is_locked flag in profiles.
-  const { data: profile } = await supabase
+  const { data: profileData } = await supabase
     .from("profiles")
-    .select("is_locked")
+    .select("is_locked, role")
     .eq("id", data.user.id)
     .maybeSingle();
-  if ((profile as unknown as { is_locked: boolean } | null)?.is_locked) {
+  const profile = profileData as unknown as { is_locked: boolean; role: "admin" | "customer" } | null;
+  if (profile?.is_locked) {
     await supabase.auth.signOut();
     return { error: LOCKED_MESSAGE, values };
   }
 
   revalidatePath("/", "layout");
-  redirect(safeRedirectPath(formData.get("next"), "/"));
+  redirect(postLoginPath(profile?.role, formData.get("next")));
 }
 
 /** F1 – register a new Customer account. */

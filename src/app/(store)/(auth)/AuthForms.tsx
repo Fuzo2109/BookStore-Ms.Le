@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import { login, register } from "./actions";
+import { login, register } from "@/lib/auth-actions";
 import { FieldError, FormAlert, SubmitButton } from "@/components/FormBits";
 import type { FormState } from "@/lib/types";
 
