@@ -5,11 +5,37 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { removeCoverFiles, uploadCover } from "@/lib/covers";
-import { bookSchema, fieldErrors, formValues } from "@/lib/validation";
+import { bookSchema, escapeLike, fieldErrors, formValues } from "@/lib/validation";
 import { COVER_FORMAT_MESSAGE, sniffImageType, validateCoverFile } from "@/lib/cover-rules";
 import type { FormState } from "@/lib/types";
 
-const FIELDS = ["title", "authorId", "categoryId", "price", "stock", "description"];
+const FIELDS = ["title", "authorName", "categoryId", "price", "stock", "description"];
+
+type Db = Awaited<ReturnType<typeof createClient>>;
+
+/**
+ * Finds the author by name (case- and space-insensitive) or creates it.
+ * The unique index authors_name_ci_unique guarantees no duplicates even if
+ * two admins add the same new author at the same time.
+ */
+async function resolveAuthorId(supabase: Db, name: string): Promise<{ id: number } | { error: string }> {
+  const find = async () => {
+    const { data, error } = await supabase.from("authors").select("id, name").ilike("name", escapeLike(name)).limit(1);
+    if (error) throw new Error(error.message);
+    return (data as unknown as { id: number }[] | null)?.[0];
+  };
+
+  const existing = await find();
+  if (existing) return { id: existing.id };
+
+  const { data, error } = await supabase.from("authors").insert({ name }).select("id").single();
+  if (!error) return { id: (data as unknown as { id: number }).id };
+  if (error.code === "23505") {
+    const again = await find();
+    if (again) return { id: again.id };
+  }
+  return { error: `Could not save the author: ${error.message}` };
+}
 
 function dbError(error: { code?: string; message: string }): FormState {
   if (error.code === "23503") return { error: "The selected author or category no longer exists." };
@@ -21,6 +47,7 @@ function revalidateCatalogue(id?: number) {
   revalidatePath("/");
   revalidatePath("/books");
   revalidatePath("/admin/books");
+  revalidatePath("/admin/authors");
   if (id) revalidatePath(`/books/${id}`);
 }
 
@@ -46,16 +73,19 @@ export async function saveBook(bookId: number | undefined, _prev: FormState, for
     if (coverError) return { fieldErrors: { cover: coverError }, values };
   }
 
+  const supabase = await createClient();
+  const author = await resolveAuthorId(supabase, parsed.data.authorName);
+  if ("error" in author) return { fieldErrors: { authorName: author.error }, values };
+
   const row = {
     title: parsed.data.title,
-    author_id: parsed.data.authorId,
+    author_id: author.id,
     category_id: parsed.data.categoryId,
     price: parsed.data.price,
     stock: parsed.data.stock,
     description: parsed.data.description,
   };
 
-  const supabase = await createClient();
   let id: number;
   let oldPaths: (string | null)[] = [];
 

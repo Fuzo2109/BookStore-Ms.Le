@@ -18,7 +18,7 @@ export default async function NewBookPage() {
       <BookForm
         authors={authors}
         categories={categories}
-        book={{ title: "", authorId: "", categoryId: "", price: "", stock: "0", description: "", coverUrl: DEFAULT_COVER }}
+        book={{ title: "", authorName: "", categoryId: "", price: "", stock: "0", description: "", coverUrl: DEFAULT_COVER }}
       />
     </div>
   );
