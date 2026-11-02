@@ -57,7 +57,7 @@ export async function renameName(table: Taxonomy, id: number, _prev: FormState, 
   return { success: "Saved." };
 }
 
-export async function deleteName(table: Taxonomy, id: number, _prev: FormState): Promise<FormState> {
+export async function deleteName(table: Taxonomy, id: number): Promise<FormState> {
   check(table);
   await requireAdmin();
   const supabase = await createClient();
