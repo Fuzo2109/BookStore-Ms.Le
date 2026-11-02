@@ -99,11 +99,13 @@ Record the production URL and the demo accounts (Administrator + Customer) in th
 ```
 src/
   app/
-    page.tsx                 Home (hero, new arrivals, categories)
-    books/page.tsx           F3 list + F5 search/filters
-    books/[id]/page.tsx      F4 detail
-    (auth)/                  F1 login, register, logout (Server Actions)
-    admin/                   Admin area (guarded by requireAdmin)
+    (store)/                 Customer storefront (header + footer layout)
+      page.tsx               Home (hero, new arrivals, categories)
+      books/page.tsx         F3 list + F5 search/filters
+      books/[id]/page.tsx    F4 detail
+      (auth)/                F1 login, register
+    admin/                   Admin portal: own sidebar layout, guarded by requireAdmin;
+                             admins are sent here automatically after logging in
       books/                 F2 + CR-04
       categories/, authors/  F2 (shared NameManager in admin/taxonomy)
       users/                 F1 create / lock accounts

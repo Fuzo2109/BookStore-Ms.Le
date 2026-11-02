@@ -5,6 +5,7 @@ import { getAuthors, getCategories } from "@/lib/catalog";
 import { coverUrl } from "@/lib/format";
 import { FormAlert } from "@/components/FormBits";
 import { BookForm } from "../../BookForm";
+import { PageHeader } from "@/components/admin/PageHeader";
 
 export const metadata: Metadata = { title: "Edit book" };
 
@@ -44,7 +45,11 @@ export default async function EditBookPage({ params, searchParams }: Props) {
 
   return (
     <div>
-      <h1 className="mb-2 text-2xl font-bold">Edit book</h1>
+      <PageHeader
+        title={`Edit: ${book.title}`}
+        description={`Book #${book.id}`}
+        crumbs={[{ href: "/admin", label: "Dashboard" }, { href: "/admin/books", label: "Books" }]}
+      />
       {book.deleted_at && (
         <p className="mb-4 text-sm text-amber-700">This book is deleted (hidden from customers). Restore it from the book list.</p>
       )}
