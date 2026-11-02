@@ -5,13 +5,13 @@ import { useActionState, useState } from "react";
 import { saveBook } from "./actions";
 import { FieldError, FormAlert, SubmitButton } from "@/components/FormBits";
 import { COVER_ACCEPT_ATTR, validateCoverFile } from "@/lib/cover-rules";
-import { MAX_PRICE, MAX_STOCK } from "@/lib/validation";
+import { MAX_PRICE, MAX_STOCK, nameKey, normalizeName } from "@/lib/validation";
 import type { Author, Category, FormState } from "@/lib/types";
 
 export interface BookFormValues {
   id?: number;
   title: string;
-  authorId: string;
+  authorName: string;
   categoryId: string;
   price: string;
   stock: string;
@@ -77,29 +77,12 @@ export function BookForm({
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <label htmlFor="authorId" className="label">
-              Author *
-            </label>
-            <select
-              id="authorId"
-              name="authorId"
-              required
-              defaultValue={v("authorId")}
-              aria-invalid={Boolean(fe.authorId)}
-              aria-describedby="authorId-error"
-              className="input"
-            >
-              <option value="">Choose an author…</option>
-              {authors.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.name}
-                </option>
-              ))}
-            </select>
-            <FieldError id="authorId-error" message={fe.authorId} />
-            <Link href="/admin/authors" className="mt-1 inline-block text-xs text-brand-600 hover:underline">
-              Manage authors
-            </Link>
+            <AuthorInput
+              key={state.values?.authorName ?? "initial"}
+              authors={authors}
+              defaultValue={v("authorName")}
+              error={fe.authorName}
+            />
           </div>
           <div>
             <label htmlFor="categoryId" className="label">
@@ -219,5 +202,64 @@ export function BookForm({
         <FieldError id="cover-error" message={fe.cover} />
       </div>
     </form>
+  );
+}
+
+/**
+ * Author field: type freely with suggestions from existing authors (datalist).
+ * Matching ignores case and extra spaces; an unknown name is created on save.
+ */
+function AuthorInput({
+  authors,
+  defaultValue,
+  error,
+}: {
+  authors: Author[];
+  defaultValue: string;
+  error?: string;
+}) {
+  const [value, setValue] = useState(defaultValue);
+  const typed = normalizeName(value);
+  const match = typed ? authors.find((a) => nameKey(a.name) === nameKey(typed)) : undefined;
+  const isNew = Boolean(typed) && !match;
+
+  return (
+    <div>
+      <label htmlFor="authorName" className="label">
+        Author *
+      </label>
+      <input
+        id="authorName"
+        name="authorName"
+        list="author-options"
+        required
+        maxLength={150}
+        autoComplete="off"
+        placeholder="Start typing a name…"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        aria-invalid={Boolean(error)}
+        aria-describedby="authorName-hint authorName-error"
+        className="input"
+      />
+      <datalist id="author-options">
+        {authors.map((a) => (
+          <option key={a.id} value={a.name} />
+        ))}
+      </datalist>
+      <p id="authorName-hint" className="mt-1 text-xs" aria-live="polite">
+        {isNew ? (
+          <span className="font-medium text-accent-600">New author “{typed}” will be created when you save.</span>
+        ) : match ? (
+          <span className="text-brand-600">Existing author: {match.name}</span>
+        ) : (
+          <span className="text-stone-500">Pick a suggestion or type a new name.</span>
+        )}
+      </p>
+      <FieldError id="authorName-error" message={error} />
+      <Link href="/admin/authors" className="mt-1 inline-block text-xs text-brand-600 hover:underline">
+        Manage authors
+      </Link>
+    </div>
   );
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { bookSchema, registerSchema, safeRedirectPath } from "@/lib/validation";
+import { bookSchema, escapeLike, nameKey, normalizeName, registerSchema, safeRedirectPath } from "@/lib/validation";
 
-const validBook = { title: "Dune", authorId: "1", categoryId: "2", price: "210000", stock: "5", description: "" };
+const validBook = { title: "Dune", authorName: "Frank Herbert", categoryId: "2", price: "210000", stock: "5", description: "" };
 
 describe("F2 book validation (server side)", () => {
   it("accepts a valid book", () => {
@@ -15,7 +15,8 @@ describe("F2 book validation (server side)", () => {
     ["negative stock", { stock: "-1" }, "stock"],
     ["decimal stock", { stock: "1.5" }, "stock"],
     ["blank title", { title: "   " }, "title"],
-    ["missing author", { authorId: "" }, "authorId"],
+    ["missing author", { authorName: "" }, "authorName"],
+    ["blank author", { authorName: "   " }, "authorName"],
     ["missing category", { categoryId: "" }, "categoryId"],
   ])("rejects %s", (_label, patch, field) => {
     const r = bookSchema.safeParse({ ...validBook, ...patch });
@@ -51,5 +52,21 @@ describe("safe redirects after login", () => {
     expect(safeRedirectPath("//evil.example")).toBe("/");
     expect(safeRedirectPath("https://evil.example")).toBe("/");
     expect(safeRedirectPath(undefined)).toBe("/");
+  });
+});
+
+describe("F2 author typed with suggestions", () => {
+  it("normalises spaces in the author name", () => {
+    const r = bookSchema.safeParse({ ...validBook, authorName: "  J.R.R.   Tolkien " });
+    expect(r.success && r.data.authorName).toBe("J.R.R. Tolkien");
+  });
+
+  it("matches existing authors regardless of case and spacing", () => {
+    expect(nameKey("j.r.r.  TOLKIEN")).toBe(nameKey("J.R.R. Tolkien"));
+    expect(normalizeName(" Nguyen   Nhat Anh ")).toBe("Nguyen Nhat Anh");
+  });
+
+  it("treats LIKE wildcards in names literally", () => {
+    expect(escapeLike("100%_real")).toBe("100\\%\\_real");
   });
 });

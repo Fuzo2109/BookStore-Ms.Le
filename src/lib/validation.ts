@@ -47,9 +47,28 @@ const positiveId = (label: string) =>
 export const MAX_PRICE = 100_000_000; // VND
 export const MAX_STOCK = 100_000;
 
+/** Trims and collapses inner spaces: "  J.R.R.   Tolkien " → "J.R.R. Tolkien". */
+export function normalizeName(value: string): string {
+  return value.replace(/\s+/g, " ").trim();
+}
+
+/** Key used to match names regardless of case/spacing (mirrors the DB unique index). */
+export function nameKey(value: string): string {
+  return normalizeName(value).toLowerCase();
+}
+
+/** Escapes LIKE wildcards so user text is matched literally. */
+export function escapeLike(value: string): string {
+  return value.replace(/[\\%_]/g, (c) => `\\${c}`);
+}
+
 export const bookSchema = z.object({
   title: z.string().trim().min(1, "Title is required.").max(255, "Title must be at most 255 characters."),
-  authorId: positiveId("an author"),
+  // Typed with suggestions; an unknown name creates a new author on save.
+  authorName: z
+    .string()
+    .transform(normalizeName)
+    .pipe(z.string().min(1, "Author is required.").max(150, "Author name must be at most 150 characters.")),
   categoryId: positiveId("a category"),
   price: z.coerce
     .number({ invalid_type_error: "Price must be a number." })
@@ -65,7 +84,10 @@ export const bookSchema = z.object({
 });
 
 export const nameSchema = z.object({
-  name: z.string().trim().min(1, "Name is required.").max(100, "Name must be at most 100 characters."),
+  name: z
+    .string()
+    .transform(normalizeName)
+    .pipe(z.string().min(1, "Name is required.").max(100, "Name must be at most 100 characters.")),
 });
 
 /** Turns a ZodError into { field: firstMessage }. */

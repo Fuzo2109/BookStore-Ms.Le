@@ -24,6 +24,7 @@ interface BookRow {
   description: string;
   cover_path: string | null;
   deleted_at: string | null;
+  authors: { name: string } | null;
 }
 
 export default async function EditBookPage({ params, searchParams }: Props) {
@@ -34,7 +35,7 @@ export default async function EditBookPage({ params, searchParams }: Props) {
   const [{ data }, authors, categories] = await Promise.all([
     supabase
       .from("books")
-      .select("id, title, author_id, category_id, price, stock, description, cover_path, deleted_at")
+      .select("id, title, author_id, category_id, price, stock, description, cover_path, deleted_at, authors(name)")
       .eq("id", Number(id))
       .maybeSingle(),
     getAuthors(),
@@ -64,7 +65,7 @@ export default async function EditBookPage({ params, searchParams }: Props) {
         book={{
           id: book.id,
           title: book.title,
-          authorId: String(book.author_id),
+          authorName: book.authors?.name ?? "",
           categoryId: String(book.category_id),
           price: String(book.price),
           stock: String(book.stock),
