@@ -113,3 +113,9 @@ from (values
 ) as v(title, description)
 where b.title = v.title
   and b.description not ilike 'overview%';
+
+-- Product details for books whose edition data was entered by the team (04/11/2026).
+update public.books set format = 'Paperback', language = 'English', publisher = 'HarperCollins Publishers',
+  publication_date = '2002-03-05', isbn13 = '9780060935467', isbn10 = '0060935464',
+  dimensions = '5.30 × 8.00 × 0.82 inches', shipping_weight_lbs = 0.55
+where title = 'To Kill a Mockingbird' and isbn13 is null;

@@ -31,6 +31,15 @@ export interface CatalogBook {
   author_name: string;
   category_id: number;
   category_name: string;
+  // Product details (all optional)
+  format: string | null;
+  language: string | null;
+  publisher: string | null;
+  publication_date: string | null;
+  isbn13: string | null;
+  isbn10: string | null;
+  dimensions: string | null;
+  shipping_weight_lbs: number | null;
 }
 
 /** Shape returned by Server Actions to client forms. */

@@ -1,5 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { bookSchema, escapeLike, nameKey, normalizeName, registerSchema, safeRedirectPath } from "@/lib/validation";
+import {
+  bookDetailsSchema,
+  bookSchema,
+  escapeLike,
+  isValidIsbn10,
+  isValidIsbn13,
+  nameKey,
+  normalizeName,
+  registerSchema,
+  safeRedirectPath,
+} from "@/lib/validation";
 
 const validBook = { title: "Dune", authorName: "Frank Herbert", categoryId: "2", price: "210000", stock: "5", description: "" };
 
@@ -68,5 +78,42 @@ describe("F2 author typed with suggestions", () => {
 
   it("treats LIKE wildcards in names literally", () => {
     expect(escapeLike("100%_real")).toBe("100\\%\\_real");
+  });
+});
+
+describe("Product details (F2/F4)", () => {
+  const ok = { format: "Paperback", language: "English", publisher: "HarperCollins Publishers", dimensions: "", publicationDate: "2002-03-05", isbn13: "978-0-06-093546-7", isbn10: "0060935464", shippingWeight: "0.55" };
+
+  it("accepts valid details and normalises the ISBN", () => {
+    const r = bookDetailsSchema.safeParse(ok);
+    expect(r.success).toBe(true);
+    if (r.success) {
+      expect(r.data.isbn13).toBe("9780060935467");
+      expect(r.data.dimensions).toBeNull();
+      expect(r.data.shippingWeight).toBe(0.55);
+    }
+  });
+
+  it("treats every field as optional", () => {
+    const empty = Object.fromEntries(Object.keys(ok).map((k) => [k, ""]));
+    expect(bookDetailsSchema.safeParse(empty).success).toBe(true);
+  });
+
+  it.each([
+    ["ISBN-13 with a wrong check digit", { isbn13: "9780060935468" }, "isbn13"],
+    ["ISBN-13 with 12 digits", { isbn13: "978006093546" }, "isbn13"],
+    ["ISBN-10 with letters", { isbn10: "06A0935464" }, "isbn10"],
+    ["zero shipping weight", { shippingWeight: "0" }, "shippingWeight"],
+    ["invalid date", { publicationDate: "2010-13-40" }, "publicationDate"],
+  ])("rejects %s", (_l, patch, field) => {
+    const r = bookDetailsSchema.safeParse({ ...ok, ...patch });
+    expect(r.success).toBe(false);
+    if (!r.success) expect(r.error.issues[0].path[0]).toBe(field);
+  });
+
+  it("validates ISBN check digits", () => {
+    expect(isValidIsbn13("9780545174800")).toBe(true);
+    expect(isValidIsbn10("0545174805")).toBe(true);
+    expect(isValidIsbn10("080442957X")).toBe(true);
   });
 });
