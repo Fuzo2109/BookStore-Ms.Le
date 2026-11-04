@@ -1,0 +1,194 @@
+{
+ "started": "2026-11-04T08:56:28+07:00",
+ "tc01": {
+  "heading": "All books",
+  "count_text": "37 books · page 1 of 4",
+  "cards": 12,
+  "all_have_fields": true,
+  "price_sample": "150.000 ₫"
+ },
+ "tc02": {
+  "first": "The Spooky Wheels on the Bus: (a Holiday Wheels on the Bus Book)",
+  "twelfth": "I, Robot",
+  "page1": [
+   "The Spooky Wheels on the Bus: (a Holiday Wheels on the Bus Book)",
+   "To Kill a Mockingbird",
+   "Nineteen Eighty-Four",
+   "Animal Farm",
+   "Pride and Prejudice",
+   "Emma",
+   "The Great Gatsby",
+   "The Hobbit",
+   "The Fellowship of the Ring",
+   "Dune",
+   "Foundation",
+   "I, Robot"
+  ]
+ },
+ "tc03": {
+  "2": {
+   "count": 12,
+   "first": "A Wizard of Earthsea",
+   "last": "War and Peace"
+  },
+  "3": {
+   "count": 12,
+   "first": "Sapiens: A Brief History of Humankind",
+   "last": "Charlie and the Chocolate Factory"
+  },
+  "4": {
+   "count": 1,
+   "first": "The BFG",
+   "last": "The BFG"
+  }
+ },
+ "tc04": {
+  "has_message": true,
+  "button_to_page1": true,
+  "text": "All books\n\n37 books · page 4 of 4\n\nTitle or author\nCategory\nAll categories\nBusiness & Economics\nChildren's Books\nClassics\nFiction\nMystery & Thriller\nScience & Technology\nScience Fiction & Fantasy\nSelf-Help\nPrice (VND)\nMinimum price\n–\nMaximum price\nApply\nClear\n\nThis page does not exist.\n\nGo to the fi"
+ },
+ "tc05": {
+  "abc": {
+   "first": "The Spooky Wheels on the Bus: (a Holiday Wheels on the Bus Book)",
+   "count": 12,
+   "count_text": "37 books · page 1 of 4"
+  },
+  "-1": {
+   "first": "The Spooky Wheels on the Bus: (a Holiday Wheels on the Bus Book)",
+   "count": 12,
+   "count_text": "37 books · page 1 of 4"
+  }
+ },
+ "tc09": {
+  "cards_without_thumb": [
+   [
+    "Cho Toi Xin Mot Ve Di Tuoi Tho",
+    "/images/default-cover.svg"
+   ]
+  ],
+  "img_natural_width": 300
+ },
+ "tc10": {
+  "out_of_stock_cards": [
+   "The Da Vinci Code",
+   "The BFG"
+  ]
+ },
+ "tc06": {
+  "viewport": {
+   "width": 1440,
+   "height": 900
+  },
+  "perRow": 6,
+  "scrollW": 1440,
+  "clientW": 1440,
+  "asideLeftOfGrid": true,
+  "asideAboveGrid": false,
+  "searchWidth": 803
+ },
+ "tc07": {
+  "viewport": {
+   "width": 768,
+   "height": 1024
+  },
+  "perRow": 3,
+  "scrollW": 768,
+  "clientW": 768,
+  "asideLeftOfGrid": false,
+  "asideAboveGrid": true,
+  "searchWidth": 291
+ },
+ "tc08": {
+  "viewport": {
+   "width": 375,
+   "height": 667
+  },
+  "perRow": 2,
+  "scrollW": 375,
+  "clientW": 375,
+  "asideLeftOfGrid": false,
+  "asideAboveGrid": true,
+  "searchWidth": 255
+ },
+ "ac4": [
+  {
+   "run": 1,
+   "dcl": 952,
+   "load": 1333,
+   "ttfb": 298,
+   "requests": 41,
+   "total_kb": 652.6,
+   "cover_images_loaded": 12,
+   "cover_images_all_thumb_webp": true,
+   "cover_image_kb": [
+    19.2,
+    20.6,
+    11.4,
+    20.7,
+    13.0,
+    13.0,
+    24.1,
+    16.4,
+    14.5,
+    22.7,
+    22.8,
+    18.5
+   ],
+   "card_srcs_all_thumb_webp": true,
+   "cards": 12
+  },
+  {
+   "run": 2,
+   "dcl": 855,
+   "load": 1255,
+   "ttfb": 308,
+   "requests": 41,
+   "total_kb": 652.3,
+   "cover_images_loaded": 12,
+   "cover_images_all_thumb_webp": true,
+   "cover_image_kb": [
+    16.6,
+    12.8,
+    14.5,
+    22.6,
+    19.0,
+    11.7,
+    13.0,
+    22.7,
+    24.1,
+    20.7,
+    18.7,
+    20.6
+   ],
+   "card_srcs_all_thumb_webp": true,
+   "cards": 12
+  },
+  {
+   "run": 3,
+   "dcl": 896,
+   "load": 1273,
+   "ttfb": 309,
+   "requests": 41,
+   "total_kb": 653.4,
+   "cover_images_loaded": 12,
+   "cover_images_all_thumb_webp": true,
+   "cover_image_kb": [
+    18.7,
+    12.8,
+    20.6,
+    19.0,
+    13.0,
+    22.9,
+    22.6,
+    14.5,
+    20.7,
+    24.1,
+    16.6,
+    11.4
+   ],
+   "card_srcs_all_thumb_webp": true,
+   "cards": 12
+  }
+ ],
+ "finished": "2026-11-04T08:57:02+07:00"
+}
