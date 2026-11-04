@@ -5,11 +5,12 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { removeCoverFiles, uploadCover } from "@/lib/covers";
-import { bookSchema, escapeLike, fieldErrors, formValues } from "@/lib/validation";
+import { bookDetailsSchema, bookSchema, escapeLike, fieldErrors, formValues } from "@/lib/validation";
 import { COVER_FORMAT_MESSAGE, sniffImageType, validateCoverFile } from "@/lib/cover-rules";
 import type { FormState } from "@/lib/types";
 
-const FIELDS = ["title", "authorName", "categoryId", "price", "stock", "description"];
+const DETAIL_FIELDS = ["format", "language", "publisher", "publicationDate", "isbn13", "isbn10", "dimensions", "shippingWeight"];
+const FIELDS = ["title", "authorName", "categoryId", "price", "stock", "description", ...DETAIL_FIELDS];
 
 type Db = Awaited<ReturnType<typeof createClient>>;
 
@@ -39,6 +40,8 @@ async function resolveAuthorId(supabase: Db, name: string): Promise<{ id: number
 
 function dbError(error: { code?: string; message: string }): FormState {
   if (error.code === "23503") return { error: "The selected author or category no longer exists." };
+  if (error.code === "23505" && error.message.includes("isbn13"))
+    return { fieldErrors: { isbn13: "This ISBN-13 is already used by another book." } };
   if (error.code === "23514") return { error: "Some values are not allowed (price must be > 0, stock ≥ 0)." };
   return { error: `Could not save the book: ${error.message}` };
 }
@@ -60,7 +63,16 @@ export async function saveBook(bookId: number | undefined, _prev: FormState, for
   const values = formValues(formData, FIELDS);
 
   const parsed = bookSchema.safeParse(values);
-  if (!parsed.success) return { fieldErrors: fieldErrors(parsed.error), values };
+  const details = bookDetailsSchema.safeParse(values);
+  if (!parsed.success || !details.success) {
+    return {
+      fieldErrors: {
+        ...(details.success ? {} : fieldErrors(details.error)),
+        ...(parsed.success ? {} : fieldErrors(parsed.error)),
+      },
+      values,
+    };
+  }
 
   const coverEntry = formData.get("cover");
   const cover = coverEntry instanceof File && coverEntry.size > 0 ? coverEntry : null;
@@ -84,6 +96,14 @@ export async function saveBook(bookId: number | undefined, _prev: FormState, for
     price: parsed.data.price,
     stock: parsed.data.stock,
     description: parsed.data.description,
+    format: details.data.format,
+    language: details.data.language,
+    publisher: details.data.publisher,
+    publication_date: details.data.publicationDate,
+    isbn13: details.data.isbn13,
+    isbn10: details.data.isbn10,
+    dimensions: details.data.dimensions,
+    shipping_weight_lbs: details.data.shippingWeight,
   };
 
   let id: number;

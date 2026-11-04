@@ -83,6 +83,61 @@ export const bookSchema = z.object({
   description: z.string().trim().max(5000, "Description must be at most 5000 characters."),
 });
 
+// ---------- Product details (optional) ----------
+/** Removes spaces and hyphens: "978-0-06-093546-7" → "9780060935467". */
+export function normalizeIsbn(value: string): string {
+  return value.replace(/[\s-]/g, "").toUpperCase();
+}
+
+export function isValidIsbn13(isbn: string): boolean {
+  if (!/^\d{13}$/.test(isbn)) return false;
+  const sum = [...isbn].reduce((acc, ch, i) => acc + Number(ch) * (i % 2 === 0 ? 1 : 3), 0);
+  return sum % 10 === 0;
+}
+
+export function isValidIsbn10(isbn: string): boolean {
+  if (!/^\d{9}[\dX]$/.test(isbn)) return false;
+  const sum = [...isbn].reduce((acc, ch, i) => acc + (ch === "X" ? 10 : Number(ch)) * (10 - i), 0);
+  return sum % 11 === 0;
+}
+
+const optionalText = (max: number, label: string) =>
+  z
+    .string()
+    .transform(normalizeName)
+    .pipe(z.string().max(max, `${label} must be at most ${max} characters.`))
+    .transform((v) => v || null);
+
+export const bookDetailsSchema = z.object({
+  format: optionalText(50, "Format"),
+  language: optionalText(50, "Language"),
+  publisher: optionalText(150, "Publisher"),
+  dimensions: optionalText(60, "Dimensions"),
+  publicationDate: z
+    .string()
+    .trim()
+    .refine((v) => v === "" || (/^\d{4}-\d{2}-\d{2}$/.test(v) && !Number.isNaN(Date.parse(v))), "Enter a valid date.")
+    .transform((v) => v || null),
+  isbn13: z
+    .string()
+    .transform(normalizeIsbn)
+    .refine((v) => v === "" || isValidIsbn13(v), "ISBN-13 must be 13 digits with a valid check digit.")
+    .transform((v) => v || null),
+  isbn10: z
+    .string()
+    .transform(normalizeIsbn)
+    .refine((v) => v === "" || isValidIsbn10(v), "ISBN-10 must be 10 characters (last may be X) with a valid check digit.")
+    .transform((v) => v || null),
+  shippingWeight: z
+    .string()
+    .trim()
+    .refine(
+      (v) => v === "" || (/^\d{1,4}(\.\d{1,2})?$/.test(v) && Number(v) > 0),
+      "Shipping weight must be a positive number in lbs (up to 2 decimals).",
+    )
+    .transform((v) => (v === "" ? null : Number(v))),
+});
+
 export const nameSchema = z.object({
   name: z
     .string()

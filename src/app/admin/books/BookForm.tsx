@@ -17,7 +17,35 @@ export interface BookFormValues {
   stock: string;
   description: string;
   coverUrl: string;
+  format?: string;
+  language?: string;
+  publisher?: string;
+  publicationDate?: string;
+  isbn13?: string;
+  isbn10?: string;
+  dimensions?: string;
+  shippingWeight?: string;
 }
+
+/** Optional "Product details" shown on the book page (F4). */
+const DETAIL_INPUTS: {
+  name: keyof BookFormValues;
+  label: string;
+  type?: string;
+  placeholder?: string;
+  maxLength?: number;
+  list?: string;
+  inputMode?: "numeric" | "decimal";
+}[] = [
+  { name: "format", label: "Format", placeholder: "Paperback", maxLength: 50, list: "format-options" },
+  { name: "language", label: "Language", placeholder: "English", maxLength: 50, list: "language-options" },
+  { name: "publisher", label: "Publisher", placeholder: "HarperCollins Publishers", maxLength: 150 },
+  { name: "publicationDate", label: "Publication date", type: "date" },
+  { name: "isbn13", label: "ISBN-13", placeholder: "9780060935467", maxLength: 17, inputMode: "numeric" },
+  { name: "isbn10", label: "ISBN-10", placeholder: "0060935464", maxLength: 13 },
+  { name: "dimensions", label: "Dimensions", placeholder: "5.30 × 8.00 × 0.82 inches", maxLength: 60 },
+  { name: "shippingWeight", label: "Shipping weight (lbs)", placeholder: "0.55", inputMode: "decimal", maxLength: 7 },
+];
 
 /** F2 add/edit form with CR-04 cover upload (checked in the browser and again on the server). */
 export function BookForm({
@@ -170,6 +198,44 @@ export function BookForm({
           />
           <FieldError id="description-error" message={fe.description} />
         </div>
+
+        <fieldset className="rounded-lg border border-stone-200 p-4">
+          <legend className="px-1 text-sm font-semibold text-stone-800">Product details (optional)</legend>
+          <p className="mb-3 text-xs text-stone-500">Shown under the description on the book page. Leave blank if unknown.</p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {DETAIL_INPUTS.map((f) => (
+              <div key={f.name}>
+                <label htmlFor={f.name} className="label">
+                  {f.label}
+                </label>
+                <input
+                  id={f.name}
+                  name={f.name}
+                  type={f.type ?? "text"}
+                  list={f.list}
+                  inputMode={f.inputMode}
+                  maxLength={f.maxLength}
+                  placeholder={f.placeholder}
+                  defaultValue={v(f.name)}
+                  aria-invalid={Boolean(fe[f.name])}
+                  aria-describedby={`${f.name}-error`}
+                  className="input"
+                />
+                <FieldError id={`${f.name}-error`} message={fe[f.name]} />
+              </div>
+            ))}
+          </div>
+          <datalist id="format-options">
+            <option value="Paperback" />
+            <option value="Hardcover" />
+            <option value="Mass Market Paperback" />
+            <option value="Board Book" />
+          </datalist>
+          <datalist id="language-options">
+            <option value="English" />
+            <option value="Vietnamese" />
+          </datalist>
+        </fieldset>
 
         <div className="flex gap-3">
           <SubmitButton>{book.id ? "Save changes" : "Add book"}</SubmitButton>

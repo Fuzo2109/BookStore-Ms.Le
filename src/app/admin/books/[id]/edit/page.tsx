@@ -25,6 +25,14 @@ interface BookRow {
   cover_path: string | null;
   deleted_at: string | null;
   authors: { name: string } | null;
+  format: string | null;
+  language: string | null;
+  publisher: string | null;
+  publication_date: string | null;
+  isbn13: string | null;
+  isbn10: string | null;
+  dimensions: string | null;
+  shipping_weight_lbs: number | string | null;
 }
 
 export default async function EditBookPage({ params, searchParams }: Props) {
@@ -35,7 +43,7 @@ export default async function EditBookPage({ params, searchParams }: Props) {
   const [{ data }, authors, categories] = await Promise.all([
     supabase
       .from("books")
-      .select("id, title, author_id, category_id, price, stock, description, cover_path, deleted_at, authors(name)")
+      .select("id, title, author_id, category_id, price, stock, description, cover_path, deleted_at, authors(name), format, language, publisher, publication_date, isbn13, isbn10, dimensions, shipping_weight_lbs")
       .eq("id", Number(id))
       .maybeSingle(),
     getAuthors(),
@@ -71,6 +79,14 @@ export default async function EditBookPage({ params, searchParams }: Props) {
           stock: String(book.stock),
           description: book.description,
           coverUrl: coverUrl(book.cover_path),
+          format: book.format ?? "",
+          language: book.language ?? "",
+          publisher: book.publisher ?? "",
+          publicationDate: book.publication_date ?? "",
+          isbn13: book.isbn13 ?? "",
+          isbn10: book.isbn10 ?? "",
+          dimensions: book.dimensions ?? "",
+          shippingWeight: book.shipping_weight_lbs == null ? "" : String(Number(book.shipping_weight_lbs)),
         }}
       />
     </div>

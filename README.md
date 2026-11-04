@@ -24,7 +24,7 @@ social login.
 | F1 | Register, log in, log out; admin creates / locks accounts; roles Administrator & Customer; admin pages blocked for others | `src/app/(auth)/*`, `src/app/admin/users/*`, `src/lib/auth.ts`, RLS in the migration |
 | F2 | Add / edit / soft-delete books (title, author, category, price > 0, description, cover, stock); manage categories & authors; client + server validation | `src/app/admin/books/*`, `src/app/admin/taxonomy/*`, `src/lib/validation.ts` |
 | F3 | Responsive card grid (cover, title, author, price), 12 per page, newest first | `src/app/books/page.tsx`, `src/components/BookCard.tsx`, `src/components/Pagination.tsx` |
-| F4 | Book detail page; unknown id → friendly message; Back returns to the same list page | `src/app/books/[id]/page.tsx` |
+| F4 | Book detail page (buying box with a disabled "Add to cart" – cart is out of scope; description and product details: format, language, publisher, publication date, ISBN-13/10, dimensions, shipping weight); unknown id → friendly message; Back returns to the same list page | `src/app/books/[id]/page.tsx` |
 | F5 | Search by title or author; filter by category and price range; works with pagination | `src/components/CatalogFilters.tsx`, `src/lib/catalog.ts`, `src/lib/catalog-params.ts` |
 | CR-04 | Upload JPG/PNG ≤ 2 MB cover from the computer; thumbnail for F3, original for F4; default image when missing | `src/lib/cover-rules.ts`, `src/lib/covers.ts`, `src/app/admin/books/BookForm.tsx` |
 
@@ -35,8 +35,9 @@ authorisation is enforced on the server (`requireAdmin()`) **and** in the databa
 ## 1. Set up Supabase (once per team)
 
 1. Create a free project at <https://supabase.com/dashboard> (region: Singapore is closest to Vietnam).
-2. **SQL Editor → New query**: paste and run `supabase/migrations/20261102000000_init_schema.sql`.
-   This creates the tables, the `book_catalog` view, RLS policies and the `book-covers` storage bucket.
+2. **SQL Editor → New query**: paste and run **every file in `supabase/migrations/` in name order**
+   (the first one creates the tables, the `book_catalog` view, RLS policies and the `book-covers` storage bucket;
+   later ones add constraints and the product-detail columns).
 3. Run `supabase/seed.sql` the same way (36 books, 8 categories, 26 authors). It is safe to re-run.
 4. **Authentication → Sign In / Providers → Email**: for the class demo, turn **off** "Confirm email" so new
    customers can log in immediately (otherwise they must click the email link first).

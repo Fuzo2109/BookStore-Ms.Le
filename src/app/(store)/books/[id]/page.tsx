@@ -45,13 +45,26 @@ export default async function BookDetailPage({ params, searchParams }: Props) {
     );
   }
 
+  const details: [string, string | null][] = [
+    ["Format", book.format],
+    ["Language", book.language],
+    ["Publisher", book.publisher],
+    ["Publication date", book.publication_date ? formatLongDate(book.publication_date) : null],
+    ["ISBN-13", book.isbn13],
+    ["ISBN-10", book.isbn10],
+    ["Dimensions", book.dimensions],
+    ["Shipping weight", book.shipping_weight_lbs != null ? `${Number(book.shipping_weight_lbs)} lbs` : null],
+  ];
+  const shownDetails = details.filter(([, v]) => v);
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
       <Link href={back} className="text-sm font-semibold text-brand-600 hover:underline">
         ← Back to the book list
       </Link>
 
-      <div className="mt-6 grid gap-10 md:grid-cols-[minmax(240px,360px)_1fr]">
+      {/* Top: cover + buying box */}
+      <div className="mt-6 grid gap-10 md:grid-cols-[minmax(240px,340px)_1fr]">
         {/* CR-04: the detail page shows the ORIGINAL image (or the default cover). */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -74,28 +87,85 @@ export default async function BookDetailPage({ params, searchParams }: Props) {
             </Link>
           </p>
 
-          <div className="card mt-6 flex flex-wrap items-center gap-x-8 gap-y-3 p-5">
-            <p className="text-3xl font-bold text-brand-700">{formatPrice(book.price)}</p>
-            <p className={book.stock > 0 ? "font-semibold text-brand-600" : "font-semibold text-stone-500"}>
-              {book.stock > 0 ? `In stock (${book.stock})` : "Out of stock"}
+          <div className="card mt-6 max-w-md p-5">
+            <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+              <p className="text-3xl font-bold text-brand-700">{formatPrice(book.price)}</p>
+              <p className={book.stock > 0 ? "font-semibold text-brand-600" : "font-semibold text-stone-500"}>
+                {book.stock > 0 ? `In stock (${book.stock})` : "Out of stock"}
+              </p>
+            </div>
+            {/* Cart and payment are out of scope for Release 1.0 (brief §2.2): the button is shown but disabled. */}
+            <button
+              type="button"
+              disabled
+              aria-disabled="true"
+              aria-describedby="cart-note"
+              className="btn-accent mt-4 w-full py-3 text-base"
+            >
+              Add to cart
+            </button>
+            <p id="cart-note" className="mt-2 text-center text-xs text-stone-500">
+              Online ordering is not available yet – visit one of our stores to buy this book.
             </p>
           </div>
 
-          <h2 className="mt-8 text-xl font-bold">Description</h2>
-          <p className="mt-2 leading-relaxed whitespace-pre-line text-stone-700">
+          {(book.format || book.publisher || book.isbn13) && (
+            <ul className="mt-5 flex flex-wrap gap-2 text-xs">
+              {[book.format, book.language, book.isbn13 && `ISBN ${book.isbn13}`].filter(Boolean).map((t) => (
+                <li key={t as string} className="rounded-full bg-stone-100 px-3 py-1 text-stone-600">
+                  {t}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      {/* Below: description + product details */}
+      <div className="mt-12 grid gap-10 border-t border-stone-200 pt-10 lg:grid-cols-[1fr_340px]">
+        <section aria-labelledby="desc-heading">
+          <h2 id="desc-heading" className="text-2xl font-bold">
+            Description
+          </h2>
+          <p className="mt-3 leading-relaxed whitespace-pre-line text-stone-700">
             {book.description || "No description yet."}
           </p>
+        </section>
 
-          <dl className="mt-8 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
-            <dt className="font-semibold text-stone-500">Author</dt>
-            <dd>{book.author_name}</dd>
-            <dt className="font-semibold text-stone-500">Category</dt>
-            <dd>{book.category_name}</dd>
-            <dt className="font-semibold text-stone-500">Book ID</dt>
-            <dd>{book.id}</dd>
+        <section aria-labelledby="details-heading" className="card h-fit p-5">
+          <h2 id="details-heading" className="font-sans text-lg font-semibold">
+            Product details
+          </h2>
+          <dl className="mt-3 divide-y divide-stone-100 text-sm">
+            {[["Author", book.author_name] as [string, string], ["Category", book.category_name] as [string, string], ...shownDetails].map(
+              ([label, value]) => (
+                <div key={label} className="grid grid-cols-[130px_1fr] gap-3 py-2">
+                  <dt className="font-medium text-stone-500">{label}</dt>
+                  <dd className="break-words text-stone-800">{value}</dd>
+                </div>
+              ),
+            )}
+            <div className="grid grid-cols-[130px_1fr] gap-3 py-2">
+              <dt className="font-medium text-stone-500">Book ID</dt>
+              <dd className="text-stone-800">{book.id}</dd>
+            </div>
           </dl>
-        </div>
+          {shownDetails.length === 0 && (
+            <p className="mt-2 text-xs text-stone-500">More details (publisher, ISBN…) will be added soon.</p>
+          )}
+        </section>
       </div>
     </div>
   );
+}
+
+/** "2010-07-01" → "1 July 2010" (date only, no time-zone shift). */
+function formatLongDate(iso: string): string {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
 }
