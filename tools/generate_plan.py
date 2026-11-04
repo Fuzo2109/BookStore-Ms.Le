@@ -163,7 +163,7 @@ task("S2-06/07/08", "Verify F2 – book data, categories/authors, validation (co
      "At least one test case per F2 AC executed with the Actual Result filled in; all blocking defects fixed or logged.")
 task("S2-09/10", "Verify F3 – book list, 12/page, newest first, responsive", P, d(3), d(4), 4,
      ["Test /books on desktop, tablet (768px) and phone (375px) widths (DevTools device mode); screenshot each.",
-      "Check 12 books per page, newest first, page 3 starts with 'Homo Deus' (seed data), page 99 shows the friendly 'page does not exist' message.",
+      "Check 12 books per page, newest first, expected order per docs/testing/F3-CR04-test-cases.md, page 99 shows the friendly 'page does not exist' message.",
       "Fix defects on a `fix/...` branch + PR."],
      "F3 test cases + screenshots", "Every F3 AC has an executed test case with evidence.")
 task("CR04-02..05", "Verify CR-04 upload, storage, thumbnail, default image", K, d(3), d(4), 3,
