@@ -50,9 +50,11 @@ export default async function BookDetailPage({ params, searchParams }: Props) {
     ["Language", book.language],
     ["Publisher", book.publisher],
     ["Publication date", book.publication_date ? formatLongDate(book.publication_date) : null],
+    // Order fills a 2-column table row by row: Format | Language, Publisher | Publication date,
+    // ISBN-13 | Dimensions, ISBN-10 | Shipping weight.
     ["ISBN-13", book.isbn13],
-    ["ISBN-10", book.isbn10],
     ["Dimensions", book.dimensions],
+    ["ISBN-10", book.isbn10],
     ["Shipping weight", book.shipping_weight_lbs != null ? `${Number(book.shipping_weight_lbs)} lbs` : null],
   ];
   const shownDetails = details.filter(([, v]) => v);
@@ -121,37 +123,32 @@ export default async function BookDetailPage({ params, searchParams }: Props) {
         </div>
       </div>
 
-      {/* Below: description + product details */}
-      <div className="mt-12 grid gap-10 border-t border-stone-200 pt-10 lg:grid-cols-[1fr_340px]">
+      {/* Below: description, then product details (full width, stacked) */}
+      <div className="mt-12 space-y-10 border-t border-stone-200 pt-10">
         <section aria-labelledby="desc-heading">
           <h2 id="desc-heading" className="text-2xl font-bold">
             Description
           </h2>
-          <p className="mt-3 leading-relaxed whitespace-pre-line text-stone-700">
+          <p className="mt-3 max-w-4xl leading-relaxed whitespace-pre-line text-stone-700">
             {book.description || "No description yet."}
           </p>
         </section>
 
-        <section aria-labelledby="details-heading" className="card h-fit p-5">
-          <h2 id="details-heading" className="font-sans text-lg font-semibold">
+        <section aria-labelledby="details-heading">
+          <h2 id="details-heading" className="text-2xl font-bold">
             Product details
           </h2>
-          <dl className="mt-3 divide-y divide-stone-100 text-sm">
-            {[["Author", book.author_name] as [string, string], ["Category", book.category_name] as [string, string], ...shownDetails].map(
-              ([label, value]) => (
-                <div key={label} className="grid grid-cols-[130px_1fr] gap-3 py-2">
-                  <dt className="font-medium text-stone-500">{label}</dt>
-                  <dd className="break-words text-stone-800">{value}</dd>
+          {shownDetails.length > 0 ? (
+            <dl className="mt-4 grid border-t border-stone-200 text-sm md:grid-cols-2">
+              {shownDetails.map(([label, value]) => (
+                <div key={label} className="grid grid-cols-[140px_1fr] gap-4 border-b border-stone-200 px-2 py-3.5 sm:grid-cols-[160px_1fr] md:pr-8">
+                  <dt className="font-semibold text-stone-900">{label}</dt>
+                  <dd className="break-words text-stone-700">{value}</dd>
                 </div>
-              ),
-            )}
-            <div className="grid grid-cols-[130px_1fr] gap-3 py-2">
-              <dt className="font-medium text-stone-500">Book ID</dt>
-              <dd className="text-stone-800">{book.id}</dd>
-            </div>
-          </dl>
-          {shownDetails.length === 0 && (
-            <p className="mt-2 text-xs text-stone-500">More details (publisher, ISBN…) will be added soon.</p>
+              ))}
+            </dl>
+          ) : (
+            <p className="mt-3 text-sm text-stone-500">More details (publisher, ISBN…) will be added soon.</p>
           )}
         </section>
       </div>
