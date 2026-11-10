@@ -1,18 +1,28 @@
 "use client";
 
-import { useActionState } from "react";
+import { startTransition, useActionState } from "react";
 import { createAccount } from "./actions";
-import { FieldError, FormAlert, SubmitButton } from "@/components/FormBits";
+import { FieldError, FormAlert } from "@/components/FormBits";
 import type { FormState } from "@/lib/types";
 
 export function CreateAccountForm() {
-  const [state, action] = useActionState(createAccount, {} as FormState);
+  const [state, action, isPending] = useActionState(createAccount, {} as FormState);
   const fe = state.fieldErrors ?? {};
   // Re-mount the inputs after a success so the form is cleared.
   const key = state.success ?? "form";
 
   return (
-    <form action={action} className="card h-fit space-y-4 p-5" key={key}>
+    <form
+      key={key}
+      className="card h-fit space-y-4 p-5"
+      aria-busy={isPending}
+      // onSubmit (not <form action>) so a server error does not reset the Role select to "Customer".
+      onSubmit={(e) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        startTransition(() => action(formData));
+      }}
+    >
       <h2 className="font-sans text-base font-semibold">Create an account</h2>
       <FormAlert error={state.error} success={state.success} />
       <div>
@@ -46,7 +56,9 @@ export function CreateAccountForm() {
         </select>
         <FieldError id="u-role-error" message={fe.role} />
       </div>
-      <SubmitButton pendingText="Creating…">Create account</SubmitButton>
+      <button type="submit" className="btn-primary" disabled={isPending} aria-disabled={isPending}>
+        {isPending ? "Creating…" : "Create account"}
+      </button>
     </form>
   );
 }

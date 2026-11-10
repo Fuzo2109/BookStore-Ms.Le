@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { startTransition, useActionState, useState } from "react";
 import { saveBook } from "./actions";
-import { FieldError, FormAlert, SubmitButton } from "@/components/FormBits";
+import { FieldError, FormAlert } from "@/components/FormBits";
 import { COVER_ACCEPT_ATTR, validateCoverFile } from "@/lib/cover-rules";
 import { MAX_PRICE, MAX_STOCK, nameKey, normalizeName } from "@/lib/validation";
 import type { Author, Category, FormState } from "@/lib/types";
@@ -57,7 +57,16 @@ export function BookForm({
   authors: Author[];
   categories: Category[];
 }) {
-  const [state, action] = useActionState(saveBook.bind(null, book.id), {} as FormState);
+  const [state, action, isPending] = useActionState(saveBook.bind(null, book.id), {} as FormState);
+
+  // Submit through onSubmit instead of <form action>: React 19 resets a form after an
+  // action-based submit, which cleared the category <select> and the chosen cover file
+  // whenever the server returned a validation error (e.g. a wrong ISBN-13).
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    startTransition(() => action(formData));
+  }
   const [coverError, setCoverError] = useState<string>();
   const [preview, setPreview] = useState(book.coverUrl);
   const fe = { ...(state.fieldErrors ?? {}) };
@@ -82,7 +91,7 @@ export function BookForm({
   }
 
   return (
-    <form action={action} className="grid gap-8 lg:grid-cols-[1fr_280px]">
+    <form onSubmit={handleSubmit} className="grid gap-8 lg:grid-cols-[1fr_280px]" aria-busy={isPending}>
       <div className="card space-y-5 p-6">
         <FormAlert error={state.error} />
 
@@ -106,7 +115,6 @@ export function BookForm({
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
             <AuthorInput
-              key={state.values?.authorName ?? "initial"}
               authors={authors}
               defaultValue={v("authorName")}
               error={fe.authorName}
@@ -238,7 +246,9 @@ export function BookForm({
         </fieldset>
 
         <div className="flex gap-3">
-          <SubmitButton>{book.id ? "Save changes" : "Add book"}</SubmitButton>
+          <button type="submit" className="btn-primary" disabled={isPending} aria-disabled={isPending}>
+            {isPending ? "Saving…" : book.id ? "Save changes" : "Add book"}
+          </button>
           <Link href="/admin/books" className="btn-outline">
             Cancel
           </Link>
