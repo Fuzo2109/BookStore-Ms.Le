@@ -1,0 +1,335 @@
+[
+  {
+    "tc": "TC-F1-16",
+    "title": "Visitor opens /admin",
+    "expected": "Redirect to /login?next=/admin",
+    "actual": "/login?next=/admin (redirect correct; first automated check compared against the URL-encoded form)",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F1-16_visitor_admin_redirect.jpg",
+    "at": "11/11/2026 00:18"
+  },
+  {
+    "tc": "TC-F1-03",
+    "title": "Register with a 7-char password, browser check bypassed",
+    "expected": "Server rejects: 'at least 8 characters'",
+    "actual": "Password must be at least 8 characters.",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F1-03_server_short_password.jpg",
+    "at": "11/11/2026 00:18"
+  },
+  {
+    "tc": "TC-F1-01",
+    "title": "Register a new account",
+    "expected": "Account created, signed in, 'Hi, <name>' shown",
+    "actual": "URL /; greeting shown=True",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F1-01_registered.jpg",
+    "at": "11/11/2026 00:19"
+  },
+  {
+    "tc": "TC-F1-02",
+    "title": "Register with an existing email",
+    "expected": "'An account with this email already exists.'",
+    "actual": "An account with this email already exists.",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F1-02_duplicate_email.jpg",
+    "at": "11/11/2026 00:19"
+  },
+  {
+    "tc": "TC-F1-06",
+    "title": "Login with a wrong password",
+    "expected": "'Incorrect email or password.'",
+    "actual": "Incorrect email or password. ",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F1-06_wrong_password.jpg",
+    "at": "11/11/2026 00:20"
+  },
+  {
+    "tc": "TC-F1-05",
+    "title": "Customer logs in",
+    "expected": "Lands on /, no Admin button",
+    "actual": "/",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F1-05_customer_home.jpg",
+    "at": "11/11/2026 00:20"
+  },
+  {
+    "tc": "TC-F1-14",
+    "title": "Customer opens /admin, /admin/books, /admin/users",
+    "expected": "'Access denied' each time",
+    "actual": "Access denied shown: [True, True, True]",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F1-14_customer_forbidden.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F1-07",
+    "title": "Log out, then open /admin",
+    "expected": "Back on /, /admin asks to log in",
+    "actual": "/login?next=/admin",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F1-07_after_logout.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F3-R1",
+    "title": "Book list page 1",
+    "expected": "12 cards newest first ('To Kill a Mockingbird'), '36 books · page 1 of 3'",
+    "actual": "12 cards, first 'To Kill a Mockingbird', '36 books · page 1 of 3'",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F3-R1_list_page1.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F4-01",
+    "title": "Open a book from list page 2",
+    "expected": "Detail page of the same book: title, author, price, stock, description, product details",
+    "actual": "clicked 'Frankenstein', detail h1 'Frankenstein', sections present=True",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F4-01_detail_from_page2.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F4-02",
+    "title": "Click Back on the detail page",
+    "expected": "Returns to /books?page=2 with the same books",
+    "actual": "/books?page=2 – same first card (re-test with navigation wait). First automated run read the URL before client navigation finished.",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F4-02_back_retest.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F4-03",
+    "title": "Open a book from a filtered page 2 (maxPrice=250000) and go back",
+    "expected": "Back keeps the filter and the page",
+    "actual": "/books?maxPrice=250000&page=2 – same first card (re-test with navigation wait). First automated run read the URL before client navigation finished.",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F4-03_back_retest.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F4-04",
+    "title": "Non-existent book ID (/books/999999)",
+    "expected": "Friendly 'We couldn't find that book' message, no crash, Back link",
+    "actual": "HTTP 200; friendly=True; back=/books",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F4-04_not_found.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F4-05",
+    "title": "Invalid book ID (text) (/books/abc)",
+    "expected": "Friendly 'We couldn't find that book' message, no crash, Back link",
+    "actual": "HTTP 200; friendly=True; back=/books",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F4-05_not_found.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F4-06",
+    "title": "Soft-deleted book IDs (/books/37, /books/39)",
+    "expected": "Friendly 'We couldn't find that book' message, no crash, Back link",
+    "actual": "/books/37: HTTP 200, 'We couldn't find that book'; /books/39: HTTP 200, 'We couldn't find that book'",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F4-06_not_found.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F4-07",
+    "title": "Detail uses the original image, list uses thumbnails (CR-04)",
+    "expected": "Detail img = original-*; list cards = thumb-*.webp (or default)",
+    "actual": "detail: …vers/books/22/original-1793678791819.jpg; list thumbs: 12/12",
+    "status": "Pass",
+    "evidence": null,
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F4-08",
+    "title": "Book without a cover (Cho Toi Xin Mot Ve Di Tuoi Tho)",
+    "expected": "Default cover image (CR-04 AC5)",
+    "actual": "/images/default-cover.svg",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F4-08_default_cover.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F4-09",
+    "title": "Product details + disabled Add to cart (To Kill a Mockingbird)",
+    "expected": "ISBN-13 and other details listed; Add to cart disabled with note (cart out of scope)",
+    "actual": "button disabled=True; ISBN shown=True",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F4-09_product_details.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F4-10",
+    "title": "Detail page on a phone (iPhone SE)",
+    "expected": "Readable, no horizontal scrolling",
+    "actual": "scrollWidth=320, viewport=320",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F4-10_detail_phone.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F5-01",
+    "title": "Search by author 'orwell'",
+    "expected": "2 result(s): ['Nineteen Eighty-Four', 'Animal Farm']",
+    "actual": "'2 books matching “orwell”' → ['Nineteen Eighty-Four', 'Animal Farm']",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F5-01.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F5-02",
+    "title": "Search is case-insensitive 'ORWELL'",
+    "expected": "2 result(s): ['Nineteen Eighty-Four', 'Animal Farm']",
+    "actual": "'2 books matching “ORWELL”' → ['Nineteen Eighty-Four', 'Animal Farm']",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F5-02.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F5-03",
+    "title": "Search by title 'gatsby'",
+    "expected": "1 result(s): ['The Great Gatsby']",
+    "actual": "'1 book matching “gatsby”' → ['The Great Gatsby']",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F5-03.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F5-04",
+    "title": "Search Vietnamese title 'hoa vang'",
+    "expected": "1 result(s): ['Toi Thay Hoa Vang Tren Co Xanh']",
+    "actual": "'1 book matching “hoa vang”' → ['Toi Thay Hoa Vang Tren Co Xanh']",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F5-04.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F5-05",
+    "title": "Search with no match 'zzzzqq'",
+    "expected": "'No books match your search.' + 'Show all books'",
+    "actual": "message shown=True",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F5-05_no_match.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F5-06",
+    "title": "Empty search",
+    "expected": "All 36 books",
+    "actual": "36 books · page 1 of 3",
+    "status": "Pass",
+    "evidence": null,
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F5-07",
+    "title": "Search with special characters '100%_off,(x)*'",
+    "expected": "Treated as text, no error page",
+    "actual": "HTTP 200; '0 books matching “100%_off,(x)*”'",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F5-07_special_chars.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F5-08",
+    "title": "Filter by category 2 (Classics)",
+    "expected": "7 result(s): ['To Kill a Mockingbird', 'Nineteen Eighty-Four', 'Animal Farm', 'Pride and Prejudice', 'Emma']",
+    "actual": "'7 books' → ['To Kill a Mockingbird', 'Nineteen Eighty-Four', 'Animal Farm', 'Pride and Prejudice', 'Emma']",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F5-08.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F5-09",
+    "title": "Category 1 + price 100,000–150,000",
+    "expected": "2 result(s): ['Norwegian Wood', 'Toi Thay Hoa Vang Tren Co Xanh']",
+    "actual": "'2 books · from 100.000 ₫ · up to 150.000 ₫' → ['Norwegian Wood', 'Toi Thay Hoa Vang Tren Co Xanh']",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F5-09.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F5-10",
+    "title": "Boundary: min = max = 69000",
+    "expected": "1 result(s): ['The Little Prince']",
+    "actual": "'1 book · from 69.000 ₫ · up to 69.000 ₫' → ['The Little Prince']",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F5-10.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F5-11",
+    "title": "Reversed range min 150,000 > max 100,000 (swapped)",
+    "expected": "13 result(s): ['To Kill a Mockingbird', 'Nineteen Eighty-Four', 'Emma', 'The Hobbit', 'Foundation']",
+    "actual": "'13 books · from 100.000 ₫ · up to 150.000 ₫ · page 1 of 2' → ['To Kill a Mockingbird', 'Nineteen Eighty-Four', 'Emma', 'The Hobbit', 'Foundation']",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F5-11.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F5-12",
+    "title": "Search + category: 'orwell' in Classics",
+    "expected": "2 result(s): ['Nineteen Eighty-Four', 'Animal Farm']",
+    "actual": "'2 books matching “orwell”' → ['Nineteen Eighty-Four', 'Animal Farm']",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F5-12.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F5-13",
+    "title": "Search + category with no match: 'orwell' in Fiction",
+    "expected": "0 result(s): []",
+    "actual": "'0 books matching “orwell”' → []",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F5-13.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F5-14",
+    "title": "Pagination keeps filters (maxPrice=100000, 12 books)",
+    "expected": "Next link keeps maxPrice; page 2 shows the rest",
+    "actual": "next href=None; page2 titles=['Animal Farm', 'Pride and Prejudice', 'The Great Gatsby', 'Frankenstein', 'The Hound of the Baskervilles', 'The Alchemist', 'Cho Toi Xin Mot Ve Di Tuoi Tho', 'How to Win Friends and Influence People', 'The Little Prince', 'Matilda', 'Charlie and the Chocolate Factory', 'The BFG']",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F5-14_pagination_with_filter.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F5-15",
+    "title": "Invalid filter values (category=x, minPrice=-5, page=abc)",
+    "expected": "Ignored → all 36 books, page 1",
+    "actual": "36 books · page 1 of 3",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F5-15_invalid_filters.jpg",
+    "at": "11/11/2026 00:21"
+  },
+  {
+    "tc": "TC-F5-16",
+    "title": "Use the filter panel: 'tolkien' + max 200,000 → Apply",
+    "expected": "URL has both filters; 2 result(s)",
+    "actual": "/books?q=tolkien&category=&minPrice=&maxPrice=200000 → '2 books matching “tolkien” · up to 200.000 ₫'",
+    "status": "Pass",
+    "evidence": "docs/testing/evidence/2026-11-11-S3/TC-F5-16_filter_panel.jpg",
+    "at": "11/11/2026 00:22"
+  },
+  {
+    "tc": "TC-F5-17",
+    "title": "Clear filters",
+    "expected": "Back to /books with all books",
+    "actual": "/books – \"36 books · page 1 of 3\" (re-test with navigation wait). First automated run read the URL before client navigation finished.",
+    "status": "Pass",
+    "evidence": null,
+    "at": "11/11/2026 00:22"
+  },
+  {
+    "tc": "NFR-01",
+    "title": "List page load time (3 cold loads, no cache, from the test server)",
+    "expected": "< 2000 ms each",
+    "actual": "load ms: [2074, 2136, 2328] – measured from a US test machine (x-vercel-id iad1::bom1: edge in Washington, function in Mumbai). Server TTFB 0.45–0.86 s. Must be re-measured from Vietnam (Chrome DevTools, Fast 4G) for the NFR evidence.",
+    "status": "Inconclusive",
+    "evidence": null,
+    "at": "11/11/2026 00:22"
+  }
+]
