@@ -3,9 +3,15 @@ import { getCurrentUser } from "@/lib/auth";
 import { logout } from "@/lib/auth-actions";
 import { SearchBox } from "@/components/SearchBox";
 import { Logo } from "@/components/Logo";
+import { CategoriesMenu } from "@/components/CategoriesMenu";
+import { getCategories } from "@/lib/catalog";
 
 export async function SiteHeader() {
-  const user = await getCurrentUser();
+  const [user, categories] = await Promise.all([
+    getCurrentUser(),
+    // The header must never break the page: if categories can't load, fall back to a plain link.
+    getCategories().catch(() => null),
+  ]);
 
   return (
     <header className="border-b border-stone-200 bg-white">
@@ -52,7 +58,8 @@ export async function SiteHeader() {
       </div>
 
       <nav className="border-t border-stone-100" aria-label="Main">
-        <ul className="mx-auto flex max-w-7xl gap-6 overflow-x-auto px-4 py-2 text-sm font-medium text-stone-700">
+        {/* flex-wrap instead of overflow-x-auto so the Categories dropdown is not clipped */}
+        <ul className="mx-auto flex max-w-7xl flex-wrap gap-x-6 gap-y-1 whitespace-nowrap px-4 py-2 text-sm font-medium text-stone-700">
           <li>
             <Link href="/books" className="hover:text-brand-600">
               All books
@@ -63,11 +70,15 @@ export async function SiteHeader() {
               New arrivals
             </Link>
           </li>
-          <li>
-            <Link href="/#categories" className="hover:text-brand-600">
-              Categories
-            </Link>
-          </li>
+          {categories ? (
+            <CategoriesMenu categories={categories} />
+          ) : (
+            <li>
+              <Link href="/#categories" className="hover:text-brand-600">
+                Categories
+              </Link>
+            </li>
+          )}
           <li>
             <Link href="/books?maxPrice=100000" className="hover:text-brand-600">
               Under 100.000 ₫

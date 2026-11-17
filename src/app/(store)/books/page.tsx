@@ -45,7 +45,8 @@ export default async function BooksPage({ searchParams }: Props) {
 
       <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
         <aside>
-          <CatalogFilters params={params} categories={categories} />
+          {/* key: remount on URL change so the uncontrolled inputs show the new filters (e.g. after the header Categories menu) */}
+          <CatalogFilters key={JSON.stringify(params)} params={params} categories={categories} />
         </aside>
 
         <section aria-label="Books">
